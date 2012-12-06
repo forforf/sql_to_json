@@ -1,0 +1,6 @@
+#/bin/bash
+MYDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+#echo $MYDIR
+#cat $MYDIR/server/config.ru
+
+thin start -R $MYDIR/config.ru -p 3001
