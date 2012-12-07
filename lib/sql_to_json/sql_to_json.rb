@@ -15,6 +15,7 @@ module SqlToJson
 
       #we only grab valid config keys
       db_config = config_sym.select{|k,v| ConfigKeys.include? k}
+      db_config[:port] = db_config[:port].to_i if db_config[:port]
 
       @client = Mysql2::Client.new(db_config)
     end
