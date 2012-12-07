@@ -22,8 +22,14 @@ describe SqlToJson::SqlToJson do
 
   describe "#initialize" do
     it "connects to the database" do
-
       expect{ SqlToJson::SqlToJson.new(@db_config)}.to_not raise_error
+    end
+
+    it "doesn't modify the input parameters" do
+      config_test = @db_config.merge({:a => "A", "b"=> {:c =>"BC"}})
+      db_config = {}.merge(config_test)
+      SqlToJson::SqlToJson.new(db_config)
+      db_config.should == config_test
     end
   end
 

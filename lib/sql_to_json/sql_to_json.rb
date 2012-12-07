@@ -4,11 +4,18 @@ require 'json'
 module SqlToJson
   class SqlToJson
 
+    ConfigKeys = [:username, :password, :host, :port, :database, :socket, :flags]
+
     attr_accessor :client
 
-    def initialize(db_config)
+    def initialize(config)
+
       #convert string keys to symbol keys for mysql2 client
-      db_config = db_config.inject({}){|memo,(k,v)| memo[k.to_sym] = v; memo}
+      config_sym = config.inject({}){|memo,(k,v)| memo[k.to_sym] = v; memo}
+
+      #we only grab valid config keys
+      db_config = config_sym.select{|k,v| ConfigKeys.include? k}
+
       @client = Mysql2::Client.new(db_config)
     end
 
