@@ -25,6 +25,11 @@ describe SqlToJson::SqlToJson do
       expect{ SqlToJson::SqlToJson.new(@db_config)}.to_not raise_error
     end
 
+    it "connects to the database with port nuber as string" do
+      @db_config["port"] = @db_config["port"].to_s if @db_config["port"]
+      expect{ SqlToJson::SqlToJson.new(@db_config)}.to_not raise_error
+    end
+
     it "doesn't modify the input parameters" do
       config_test = @db_config.merge({:a => "A", "b"=> {:c =>"BC"}})
       db_config = {}.merge(config_test)
