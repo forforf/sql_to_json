@@ -1,0 +1,44 @@
+.db-config {
+    border-style: solid;
+}
+
+#db-config-form .warning {
+    color: red;
+    font-size: 0.8em;
+}
+
+#db-config-form input{
+    width: 10em;
+    height: 1.2em;
+    font-size: 1em;
+}
+
+#db-config-form #dbdb{
+    width: 16em;
+}
+#db-config-form .label {
+    font-size: 0.75em;
+}
+
+#db-config-form .label {
+    margin: 0.2em;
+    font-size: 0.75em;
+}
+
+#db-config-form p {
+    margin: 0.05em;
+}
+
+.connect {
+    margin: 0.3em;
+}
+.connection-status {
+    margin: 0.3em;
+}
+
+.conn-bad {
+    background-color: #ffaaaa;
+}
+.conn-good {
+    background-color: #aaffaa;
+}
