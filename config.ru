@@ -3,7 +3,12 @@ require 'bundler'
 
 Bundler.require
 
-APP_ROOT = File.dirname(__FILE__) 
+APP_ROOT = File.dirname(__FILE__)
+
+libdir = File.join(APP_ROOT, 'lib')
+$LOAD_PATH.unshift(libdir) unless $LOAD_PATH.include?(libdir)
+
+require 'sql_to_json'
 
 #Application server class name and paths
 apps = {
