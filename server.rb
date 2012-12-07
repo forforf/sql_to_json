@@ -1,24 +1,20 @@
 require 'sinatra/base'
 require 'sql_to_json'
+require 'server/helpers'
 require 'securerandom'
 require 'json'
 
 
 class Server < Sinatra::Base
-
-  @@connections = {}
+  class << self; attr_accessor :connections; end
+  Server.connections = {}
 
   set :static, true
   set :root, APP_ROOT #set in config.ru
   enable :sessions
 
   helpers do
-    def connect(params)
-      con_id = session[:connection_id] ||= SecureRandom.uuid
-      client = SqlToJson::SqlToJson.new(params)
-      @@connection[con_id] = client
-      client
-    end
+    include SqlToJson::Server::Helpers
   end
 
   get '/' do
@@ -27,9 +23,12 @@ class Server < Sinatra::Base
 
   post '/connection' do
     begin
-      client = connect(params)
+      con_id = session[:connection_id] ||= SecureRandom.uuid
+      #connects to db and adds connection to Server.connections
+      client = connect(params, Server.connections, con_id)
       message = {"success" => "client connected"}
     rescue Exception => e
+      puts "Exception: #{e}"
       message = {"error" => e}
     end
 
