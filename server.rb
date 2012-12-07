@@ -35,4 +35,16 @@ class Server < Sinatra::Base
     content_type :json
     message.to_json
   end
+
+  get '/ping' do
+    con_id = session[:connection_id]
+    client = Server.connections[con_id]
+    message = nil
+    message = client.ping ? {"success" => "true"} : {"fail" => "false"}
+
+    content_type :json
+    message.to_json
+  end
+
+
 end
