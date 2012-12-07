@@ -30,6 +30,16 @@ module SqlToJson
       sql_r.to_json
     end
 
+    def ping
+      ping = nil
+      begin
+        ping = sql_ruby('show tables')
+      rescue
+        ping = nil
+      end
+      ping ? true : false
+    end
+
     private
     def format_response(resp)
       fmt_resp = resp.map {|r| r}

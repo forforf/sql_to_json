@@ -23,6 +23,7 @@ describe SqlToJson::SqlToJson do
   describe "#initialize" do
     it "connects to the database" do
       expect{ SqlToJson::SqlToJson.new(@db_config)}.to_not raise_error
+
     end
 
     it "connects to the database with port nuber as string" do
@@ -52,7 +53,22 @@ describe SqlToJson::SqlToJson do
 
     it "returns json" do
       resp = @sqlj.sql_json('show tables')
-      expect{ JSON.parse(resp)}.to_not raise_error
+      expect{ JSON.parse(resp) }.to_not raise_error
+    end
+  end
+
+  describe "#ping" do
+    before :each do
+      @sqlj = SqlToJson::SqlToJson.new(@db_config)
+    end
+
+    it "returns true if db is responding" do
+      @sqlj.ping.should == true
+    end
+
+    it "returns false if db is not responding" do
+      @sqlj.client = nil
+      @sqlj.ping.should == false
     end
   end
 end
