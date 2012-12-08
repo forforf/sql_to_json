@@ -15,9 +15,21 @@ module SqlToJson
 
       #we only grab valid config keys
       db_config = config_sym.select{|k,v| ConfigKeys.include? k}
-      db_config[:port] = db_config[:port].to_i if db_config[:port]
 
+      #must include host parameter
+      unless db_config[:host]
+        raise_msg = "Host parameter required"
+        raise ArgumentError, raise_msg
+      end
+
+      db_config[:port] = db_config[:port].to_i if db_config[:port]
       @client = Mysql2::Client.new(db_config)
+    end
+
+    def databases(fmt=nil)
+      sql_resp = sql_ruby("show databases")
+      dbs = sql_resp.map {|r| r.values.first }
+      resp = fmt == :json ? dbs.to_json : dbs
     end
 
     def sql_ruby(sql)

@@ -23,7 +23,14 @@ describe SqlToJson::SqlToJson do
   describe "#initialize" do
     it "connects to the database" do
       expect{ SqlToJson::SqlToJson.new(@db_config)}.to_not raise_error
+    end
 
+    it "requires at least a host parameter" do
+      dup = {}.merge(@db_config)
+      dup.delete("host")
+      dup.delete(:host)
+      no_host = dup
+      expect{ SqlToJson::SqlToJson.new(no_host) }.to raise_error(ArgumentError)
     end
 
     it "connects to the database with port nuber as string" do
