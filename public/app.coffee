@@ -24,7 +24,38 @@ S2JApp.directive 'activity', ($scope, $document) ->
 #  idleTime = 0
 ###
 
+#factory
+S2JApp.factory 'JSONEditor', ->
+  return JSONEditor
+
 #controllers
+S2JApp.controller 'SqlCtrl', ($scope, $element, JSONEditor) ->
+
+  $scope.sql_data = ""
+  $scope.json = {}
+
+  getSqlResults = (sql_data)->
+    json = JSON.parse sql_data
+
+
+  $scope.getSql = (sql_data) ->
+    console.log "Get SQL"
+    $scope.json = getSqlResults(sql_data)
+
+  container = $element.find($('.result-container'))
+  domContainer = container[0]
+  #editor = new JSONEditor(domContainer, {mode:'viewer'})
+  #console.log "container", editor
+
+  #move to service!!
+  $scope.ed = new JSONEditor(domContainer, {mode: 'viewer'})
+
+
+
+
+
+
+
 S2JApp.controller 'ConnectionCtrl', ($scope, $element, $http) ->
   $scope.makeConnection = ->
     console.log "Element", $element
@@ -122,4 +153,7 @@ S2JApp.controller 'DatabasesCtrl', ($scope, $http, $timeout, $document) ->
 
   #kicking off repeater
   $scope.repeatCheck(0)
+
+
+angular.bootstrap document, ["S2JApp"]
 

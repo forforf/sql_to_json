@@ -8,6 +8,8 @@
     <script src="http://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.2.1/bootstrap.min.js"></script>
     <script src="http:////cdnjs.cloudflare.com/ajax/libs/angular.js/1.0.2/angular.min.js"></script>
 
+
+    <script type="text/javascript" src="jsoneditor.js"></script>
     <script src="app.js"></script>
     <script src="main.js"></script>
     <!--<script src="controllers.js"></script>
@@ -16,6 +18,7 @@
 
 
     <link  href="http://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.2.1/css/bootstrap.min.css" rel="stylesheet" media="screen">
+    <link rel="stylesheet" href="jsoneditor.css">
     <link rel="stylesheet" href="main.css">
 
 </head>
@@ -41,6 +44,14 @@
                 <button>{{db}}</button>
             </li>
         </ul>
+
+    </div>
+    <div class="span7" ng-controller="SqlCtrl">
+        <textarea name="sql" ng-model="sql_data"></textarea>
+        <button ng-click="getSql(sql_data)">Run SQL</button>
+        <div class="result-container">{{ed.set(json)}}</div>
+    </div>
+
 
     </div>
 </div>
