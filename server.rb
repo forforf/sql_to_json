@@ -22,11 +22,24 @@ class Server < Sinatra::Base
   end
 
   post '/connection' do
+    puts "Raw Params #{params.inspect}"
+    db_params ={}
+    db_params[:username] = params[:dbuser]
+    db_params[:password] = params[:dbpass]
+    db_params[:host] = params[:dbhost]
+    db_params[:database] = params[:dbdb]
+    db_params[:port] = params[:dbport]
+    puts "Db params #{db_params.inspect}"
     begin
       con_id = session[:connection_id] ||= SecureRandom.uuid
+      if Server.connections[con_id]
+        puts "/connection: setting connection to nil"
+        Server.connections[con_id] = nil
+      end
       #connects to db and adds connection to Server.connections
-      client = connect(params, Server.connections, con_id)
-      message = {"success" => "client connected"}
+      client = connect(db_params, Server.connections, con_id)
+      me = client.sql_ruby('select user()').first
+      message = {"success" => {"db_params" => db_params, "user" => me, "connection_id" => con_id}}
     rescue Exception => e
       puts "Exception: #{e}"
       message = {"error" => e}
@@ -46,5 +59,18 @@ class Server < Sinatra::Base
     message.to_json
   end
 
-
+  get '/databases' do
+    puts "/databases"
+    con_id = session[:connection_id]
+    client = Server.connections[con_id]
+    resp = []
+    begin
+      resp = con_id ? client.databases : nil
+    rescue
+      resp = ["-- connection error occurred --"]
+    end
+    resp = resp || [ "-- none --"]
+    content_type :json
+    resp.to_json
+  end
 end

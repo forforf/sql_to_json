@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html ng-app="S2JApp">
 <head>
     <meta charset="utf-8">
     <title>Title</title>
@@ -8,26 +8,40 @@
     <script src="http://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.2.1/bootstrap.min.js"></script>
     <script src="http:////cdnjs.cloudflare.com/ajax/libs/angular.js/1.0.2/angular.min.js"></script>
 
+    <script src="app.js"></script>
+    <script src="main.js"></script>
+    <!--<script src="controllers.js"></script>
+    <script src="directives.js"></script>
+     <script src="main.js"></script> -->
+
 
     <link  href="http://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.2.1/css/bootstrap.min.css" rel="stylesheet" media="screen">
     <link rel="stylesheet" href="main.css">
 
 </head>
-<body>
+<body activity="handleActivity()">
 
 <div class="row">
     <div class="span3 db-config">
-        <form id="db-config-form">
+        <form id="db-config-form" ng-controller="ConnectionCtrl">
             <p class="warning">Warning: Data is being sent clear text</p>
-            <div class="label"><p>User</p><input type="text" id="dbuser"/></div>
-            <div class="label"><p>Pass</p><input type="password" id="dbpass"/></div>
-            <div class="label"><p>Host</p><input type="text" id="dbhost"/></div>
-            <div class="label"><p>DB (optional)</p><input type="text" id="dbdb"/></div>
+            <div class="label"><p>User</p><input type="text" name="dbuser" id="dbuser"/></div>
+            <div class="label"><p>Pass</p><input type="password" name="dbpass" id="dbpass"/></div>
+            <div class="label"><p>Host</p><input type="text" name="dbhost" id="dbhost"/></div>
+            <div class="label"><p>DB (optional)</p><input type="text" name="dbdb" id="dbdb"/></div>
+            <button class="connect ready" ng-click="makeConnection()">Go!</button>
         </form>
         <div >
-            <button class="connect ready">Go!</button>
+
             <button class="connection-status conn-bad">Connection Status</button>
         </div>
+
+        <ul class="dbs" ng-controller="DatabasesCtrl">
+            <li class="db" ng-repeat="db in dbs">
+                <button>{{db}}</button>
+            </li>
+        </ul>
+
     </div>
 </div>
 <div class="row">

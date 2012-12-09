@@ -5,11 +5,16 @@ require 'rack/test'
 require 'psych'
 require 'json'
 
+ENV['RACK_ENV'] = 'test'
+
 describe 'Server App' do
   include Rack::Test::Methods
 
   def app
     Server
+    Server.set :raise_errors, true
+    Server.set :dump_errors, false
+    Server.set :show_exceptions, false
   end
 
 
@@ -53,6 +58,8 @@ describe 'Server App' do
         resp.keys.should include "success"
         resp["success"].should == "true"
       end
+
+
     end
 
     describe "/databases" do
@@ -67,8 +74,9 @@ describe 'Server App' do
         #sets up session
         post '/connection', @par_syms
         get '/databases'
+
         resp = JSON.parse(last_response.body)
-        resp.keys.should include "sql_to_json_test"
+        resp.should include "sql_to_json_test"
       end
     end
   end

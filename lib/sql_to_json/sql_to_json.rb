@@ -17,8 +17,8 @@ module SqlToJson
       db_config = config_sym.select{|k,v| ConfigKeys.include? k}
 
       #must include host parameter
-      unless db_config[:host]
-        raise_msg = "Host parameter required"
+      if db_config[:host].nil? || db_config[:host].strip.empty?
+        raise_msg = "Host parameter required #{db_config.inspect}"
         raise ArgumentError, raise_msg
       end
 
