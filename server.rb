@@ -129,8 +129,15 @@ class Server < Sinatra::Base
     #  resp = ["Error: #{e}"]
     end
     resp = resp || [ "-- none --"]
+    #replace non-string data
+
     content_type :json
-    resp.to_json
+    begin
+      resp.to_json
+    rescue Encoding::UndefinedConversionError
+      err = {Error: "Data not valid UTF-8, only UTF-8 is currently supported"}
+      err.to_json
+    end
 
 
   end
