@@ -3,12 +3,53 @@ require 'sql_to_json'
 require 'server/helpers'
 require 'securerandom'
 require 'json'
+require 'pp'
+
+#fix to allow application/json;charset=UTF-8
+module Rack
+
+  # A Rack middleware for parsing POST/PUT body data when Content-Type is
+  # not one of the standard supported types, like <tt>application/json</tt>.
+  #
+  # TODO: Find a better name.
+  #
+  class PostBodyContentTypeParser
+
+    # Constants
+    #
+    CONTENT_TYPE = 'CONTENT_TYPE'.freeze
+    POST_BODY = 'rack.input'.freeze
+    FORM_INPUT = 'rack.request.form_input'.freeze
+    FORM_HASH = 'rack.request.form_hash'.freeze
+
+    # Supported Content-Types
+    #
+
+    ################## turned into regex so it matches type with encoding data...
+    #APPLICATION_JSON = 'application/json'.freeze
+    APPLICATION_JSON = /^application\/json/.freeze
+
+    def initialize(app)
+      @app = app
+    end
+
+    def call(env)
+      case env[CONTENT_TYPE]
+        when APPLICATION_JSON
+          env.update(FORM_HASH => JSON.parse(env[POST_BODY].read), FORM_INPUT => env[POST_BODY])
+      end
+      @app.call(env)
+    end
+
+  end
+end
 
 
 class Server < Sinatra::Base
   class << self; attr_accessor :connections; end
   Server.connections = {}
 
+  use Rack::PostBodyContentTypeParser
   set :static, true
   set :root, APP_ROOT #set in config.ru
   enable :sessions
@@ -22,7 +63,7 @@ class Server < Sinatra::Base
   end
 
   post '/connection' do
-    puts "Raw Params #{params.inspect}"
+    puts "Raw Params: #{params.inspect}"
     db_params ={}
     db_params[:username] = params[:dbuser]
     db_params[:password] = params[:dbpass]
@@ -72,5 +113,25 @@ class Server < Sinatra::Base
     resp = resp || [ "-- none --"]
     content_type :json
     resp.to_json
+  end
+
+  post '/raw_sql' do
+    puts "Params: #{params.inspect}"
+    sql = params[:sql]
+    puts "SQL: #{sql}"
+    con_id = session[:connection_id]
+    client = Server.connections[con_id]
+    resp = []
+    begin
+      resp = con_id ? client.sql_ruby(sql) : nil
+      puts "Raw Sql Resp: #{resp.inspect}"
+    #rescue Exception => e
+    #  resp = ["Error: #{e}"]
+    end
+    resp = resp || [ "-- none --"]
+    content_type :json
+    resp.to_json
+
+
   end
 end

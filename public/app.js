@@ -34,23 +34,29 @@
     return JSONEditor;
   });
 
-  S2JApp.controller('SqlCtrl', function($scope, $element, JSONEditor) {
-    var container, domContainer, getSqlResults;
+  S2JApp.controller('SqlCtrl', function($scope, $element, $http, JSONEditor) {
+    var getSqlResults;
     $scope.sql_data = "";
     $scope.json = {};
-    getSqlResults = function(sql_data) {
-      var json;
-      return json = JSON.parse(sql_data);
-    };
     $scope.getSql = function(sql_data) {
       console.log("Get SQL");
-      return $scope.json = getSqlResults(sql_data);
+      return getSqlResults(sql_data);
     };
-    container = $element.find($('.result-container'));
-    domContainer = container[0];
-    return $scope.ed = new JSONEditor(domContainer, {
-      mode: 'viewer'
-    });
+    getSqlResults = function(sql_data) {
+      var promise, req_params;
+      req_params = {
+        "sql": sql_data
+      };
+      promise = $http.post('/raw_sql', req_params);
+      return promise.success(function(resp) {
+        console.log("Resp", resp);
+        return $scope.json = resp;
+      });
+    };
+    return $scope.pp = function(json) {
+      console.log("PP", json);
+      return JSON.stringify(json, void 0, 2);
+    };
   });
 
   S2JApp.controller('ConnectionCtrl', function($scope, $element, $http) {

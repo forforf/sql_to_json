@@ -54,7 +54,11 @@ module SqlToJson
 
     private
     def format_response(resp)
-      fmt_resp = resp.map {|r| r}
+      if resp.respond_to? :map
+        fmt_resp = resp.map {|r| r}
+      else
+        fmt_resp = r
+      end
     end
   end
 end

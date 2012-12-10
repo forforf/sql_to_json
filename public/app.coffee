@@ -29,27 +29,40 @@ S2JApp.factory 'JSONEditor', ->
   return JSONEditor
 
 #controllers
-S2JApp.controller 'SqlCtrl', ($scope, $element, JSONEditor) ->
+S2JApp.controller 'SqlCtrl', ($scope, $element, $http, JSONEditor) ->
 
   $scope.sql_data = ""
   $scope.json = {}
 
-  getSqlResults = (sql_data)->
-    json = JSON.parse sql_data
-
 
   $scope.getSql = (sql_data) ->
     console.log "Get SQL"
-    $scope.json = getSqlResults(sql_data)
+    getSqlResults(sql_data)
 
-  container = $element.find($('.result-container'))
-  domContainer = container[0]
-  #editor = new JSONEditor(domContainer, {mode:'viewer'})
-  #console.log "container", editor
+
+  getSqlResults = (sql_data)->
+    req_params = {"sql": sql_data }
+    promise = $http.post '/raw_sql', req_params
+    promise.success (resp) ->
+      console.log "Resp", resp
+      $scope.json = resp
+
+
+
+
+
+
+
+
+  ##container = $element.find($('.result-container'))
+  ##domContainer = container[0]
 
   #move to service!!
-  $scope.ed = new JSONEditor(domContainer, {mode: 'viewer'})
+  ##$scope.ed = new JSONEditor(domContainer, {mode: 'viewer'})
 
+  $scope.pp = (json) ->
+    console.log "PP", json
+    JSON.stringify(json, undefined, 2);
 
 
 
