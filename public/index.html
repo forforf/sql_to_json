@@ -36,11 +36,17 @@
                 <button class="connect ready" ng-click="makeConnection()">Go!</button>
             </div>
         </form>
-        <div class="databases">
+        <div class="databases" ng-controller="DatabasesCtrl">
             <h5>Databases in host</h5>
-            <ul class="dbs" ng-controller="DatabasesCtrl">
+            <ul class="dbs">
                 <li class="db" ng-repeat="db in dbs">
-                    <a>{{db}}</a>
+                    <a href="" ng-click="checkTables()">{{db}}</a>
+                </li>
+            </ul>
+            <h5>Active Tables</h5>
+            <ul class="tables">
+                <li class="table" ng-repeat="table in tables">
+                    <a href="" ng-click="checkTables()">{{table}}</a>
                 </li>
             </ul>
         </div>

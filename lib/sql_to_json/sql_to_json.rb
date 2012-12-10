@@ -32,6 +32,13 @@ module SqlToJson
       resp = fmt == :json ? dbs.to_json : dbs
     end
 
+    def tables(dbname, fmt=nil)
+      return ["-- unknown database: #{dbname} --"] if dbname.nil? || dbname.empty?
+      sql_ruby( "use #{dbname}" )
+      tables = sql_ruby( "show tables")
+      resp = fmt == :json ? tables.to_json : tables
+    end
+
     def sql_ruby(sql)
       resp = @client.query(sql)
       fmt_resp = format_response(resp)
@@ -57,7 +64,7 @@ module SqlToJson
       if resp.respond_to? :map
         fmt_resp = resp.map {|r| r}
       else
-        fmt_resp = r
+        fmt_resp = resp
       end
     end
   end

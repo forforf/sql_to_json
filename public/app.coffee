@@ -85,13 +85,19 @@ S2JApp.controller 'ConnectionCtrl', ($scope, $element, $http, $rootScope) ->
         $rootScope.dbconnection = "good"
       else
         $rootScope.dbconnection = "bad"
+
     promise.error (resp) ->
       $rootScope.dbconnection = "bad"
 
 
-S2JApp.controller 'DatabasesCtrl', ($scope, $http, $timeout, $document) ->
+S2JApp.controller 'DatabasesCtrl', ($scope, $http, $timeout, $document, $element) ->
 
-  $scope.connection = "bad" #initial default
+  #$scope.connection = "bad" #initial default
+
+  $scope.activateDb = () ->
+    dbname = this.db
+    console.log "activate DB", dbname
+
 
   $scope.safeApply = (fn) ->
     phase = this.$root.$$phase
@@ -154,13 +160,29 @@ S2JApp.controller 'DatabasesCtrl', ($scope, $http, $timeout, $document) ->
   refreshChecker = (new DynamicRefresh()).refreshCheckSecs
 
   $scope.checkDatabases = ->
-    console.log "checking connection"
+    console.log "checking databases"
     promise = $http.get('/databases')
     promise.success (data) ->
       #very hacky
       if data.length > 1
         $scope.connection = "good"
       $scope.dbs = data
+
+  $scope.checkTables = ->
+    console.log "checking tables"
+    dbname = this.db
+    #needs escaping
+    promise = $http.get("/tables?dbname=#{dbname}")
+    promise.success (data) ->
+      console.log 'Tables: ', data
+      obj_list = data
+      table_key = "Tables_in_#{dbname}"
+      console.log table_key
+      tables = obj_list.map (table_data) -> table_data[table_key]
+      console.log "Tables", tables
+      $scope.tables = tables
+
+
 
   #since $timeout affects all watches, move to global
   #periodic database check
@@ -172,7 +194,7 @@ S2JApp.controller 'DatabasesCtrl', ($scope, $http, $timeout, $document) ->
     thisCheck = Date.now()
     timeSinceLastCheck = thisCheck - prevCheck
     timeToCheckDbs = timeSinceLastCheck > nextDelay
-    console.log "timeToCheckDbs", timeToCheckDbs
+    #console.log "timeToCheckDbs", timeToCheckDbs
     if timeToCheckDbs
       $scope.safeApply($scope.checkDatabases())
       prevCheck = thisCheck
@@ -184,6 +206,8 @@ S2JApp.controller 'DatabasesCtrl', ($scope, $http, $timeout, $document) ->
 
   #kicking off repeater
   $scope.repeatCheck(0)
+
+
 
 
 angular.bootstrap document, ["S2JApp"]

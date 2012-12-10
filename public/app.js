@@ -92,9 +92,13 @@
     };
   });
 
-  S2JApp.controller('DatabasesCtrl', function($scope, $http, $timeout, $document) {
+  S2JApp.controller('DatabasesCtrl', function($scope, $http, $timeout, $document, $element) {
     var DynamicRefresh, checkInterval, idleIncrement, idleTime, refreshChecker;
-    $scope.connection = "bad";
+    $scope.activateDb = function() {
+      var dbname;
+      dbname = this.db;
+      return console.log("activate DB", dbname);
+    };
     $scope.safeApply = function(fn) {
       var phase;
       phase = this.$root.$$phase;
@@ -162,13 +166,31 @@
     refreshChecker = (new DynamicRefresh()).refreshCheckSecs;
     $scope.checkDatabases = function() {
       var promise;
-      console.log("checking connection");
+      console.log("checking databases");
       promise = $http.get('/databases');
       return promise.success(function(data) {
         if (data.length > 1) {
           $scope.connection = "good";
         }
         return $scope.dbs = data;
+      });
+    };
+    $scope.checkTables = function() {
+      var dbname, promise;
+      console.log("checking tables");
+      dbname = this.db;
+      promise = $http.get("/tables?dbname=" + dbname);
+      return promise.success(function(data) {
+        var obj_list, table_key, tables;
+        console.log('Tables: ', data);
+        obj_list = data;
+        table_key = "Tables_in_" + dbname;
+        console.log(table_key);
+        tables = obj_list.map(function(table_data) {
+          return table_data[table_key];
+        });
+        console.log("Tables", tables);
+        return $scope.tables = tables;
       });
     };
     $scope.repeatCheck = function(prevCheck, nextDelay) {
@@ -182,7 +204,6 @@
       thisCheck = Date.now();
       timeSinceLastCheck = thisCheck - prevCheck;
       timeToCheckDbs = timeSinceLastCheck > nextDelay;
-      console.log("timeToCheckDbs", timeToCheckDbs);
       if (timeToCheckDbs) {
         $scope.safeApply($scope.checkDatabases());
         prevCheck = thisCheck;

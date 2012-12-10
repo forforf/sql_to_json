@@ -115,6 +115,23 @@ class Server < Sinatra::Base
     resp.to_json
   end
 
+  get '/tables' do
+    puts "/tables"
+    p params
+    dbname = params[:dbname]
+    con_id = session[:connection_id]
+    client = Server.connections[con_id]
+    resp = []
+    begin
+      resp = con_id ? client.tables(dbname) : nil
+    #rescue
+    #  resp = ["-- connection error occurred --"]
+    end
+    resp = resp || [ "-- none --"]
+    content_type :json
+    resp.to_json
+  end
+
   post '/raw_sql' do
     puts "Params: #{params.inspect}"
     sql = params[:sql]
