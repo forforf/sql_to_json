@@ -52,13 +52,13 @@ S2JApp.controller 'SqlCtrl', ($scope, $element, $http, JSONEditor) ->
 
 
 
-
-
-  ##container = $element.find($('.result-container'))
-  ##domContainer = container[0]
-
+  ###
+  #jsononlineeditor
+  container = $element.find($('.result-container'))
+  domContainer = container[0]
   #move to service!!
-  ##$scope.ed = new JSONEditor(domContainer, {mode: 'viewer'})
+  $scope.ed = new JSONEditor(domContainer, {mode: 'viewer'})
+  ###
 
   $scope.pp = (json) ->
     console.log "PP", json
@@ -97,6 +97,11 @@ S2JApp.controller 'DatabasesCtrl', ($scope, $http, $timeout, $document) ->
   idleIncrement = ->
     idleTime = idleTime + checkInterval
   setInterval(idleIncrement, checkInterval)
+
+  #TODO: Inject rather than magically choose the elements to ignore
+  $document.find($(".result-container")).on 'mousemove', (event) ->
+    event.stopPropagation()
+    return
 
   $document.on 'mousemove', (event) ->
     idleTime = 0

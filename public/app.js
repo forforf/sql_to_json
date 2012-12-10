@@ -53,6 +53,14 @@
         return $scope.json = resp;
       });
     };
+    /*
+      #jsononlineeditor
+      container = $element.find($('.result-container'))
+      domContainer = container[0]
+      #move to service!!
+      $scope.ed = new JSONEditor(domContainer, {mode: 'viewer'})
+    */
+
     return $scope.pp = function(json) {
       console.log("PP", json);
       return JSON.stringify(json, void 0, 2);
@@ -97,6 +105,9 @@
       return idleTime = idleTime + checkInterval;
     };
     setInterval(idleIncrement, checkInterval);
+    $document.find($(".result-container")).on('mousemove', function(event) {
+      event.stopPropagation();
+    });
     $document.on('mousemove', function(event) {
       return idleTime = 0;
     });
