@@ -25,49 +25,39 @@
 <body activity="handleActivity()">
 
 <div class="row">
-    <div class="span3 db-config">
-        <form id="db-config-form" ng-controller="ConnectionCtrl">
-            <p class="warning">Warning: Data is being sent clear text</p>
-            <div class="label"><p>User</p><input type="text" name="dbuser" id="dbuser"/></div>
-            <div class="label"><p>Pass</p><input type="password" name="dbpass" id="dbpass"/></div>
-            <div class="label"><p>Host</p><input type="text" name="dbhost" id="dbhost"/></div>
-            <div class="label"><p>DB (optional)</p><input type="text" name="dbdb" id="dbdb"/></div>
-            <button class="connect ready" ng-click="makeConnection()">Go!</button>
+    <div class="span4 db-config">
+        <form id="db-config-form"  ng-controller="ConnectionCtrl">
+            <div class="form-wrapper {{dbconnection}}">
+                <p class="warning">Warning: Data is being sent clear text</p>
+                <input type="text" name="dbuser" id="dbuser" placeholder="User"/>
+                <input type="password" name="dbpass" id="dbpass" placeholder="Pass"/>
+                <input type="text" name="dbhost" id="dbhost" placeholder="Host (required)"/>
+                <input type="text" name="dbdb" id="dbdb" placeholder="Initial db (optional)"/>
+                <button class="connect ready" ng-click="makeConnection()">Go!</button>
+            </div>
         </form>
-        <div >
-
-            <button class="connection-status conn-bad">Connection Status</button>
+        <div class="databases">
+            <h5>Databases in host</h5>
+            <ul class="dbs" ng-controller="DatabasesCtrl">
+                <li class="db" ng-repeat="db in dbs">
+                    <a>{{db}}</a>
+                </li>
+            </ul>
         </div>
-
-        <ul class="dbs" ng-controller="DatabasesCtrl">
-            <li class="db" ng-repeat="db in dbs">
-                <button>{{db}}</button>
-            </li>
-        </ul>
 
     </div>
     <div class="span7" ng-controller="SqlCtrl">
         <textarea name="sql" ng-model="sql_data"></textarea>
         <button ng-click="getSql(sql_data)">Run SQL</button>
-        Note: Formatting will be improved soon.
+        <div class="outer-container">
+        <h5>Sql Results:</h5>
         <div class="result-container">{{json}}</div>
+        </div>
     </div>
 
 
     </div>
 </div>
-<div class="row">
-
-    <div class="span4 offset1">
-        <h3>and here</h3>
-        <div class="moola-iphone details"></div>
-    </div>
-    <div class="span4">
-        <h3>and here too</h3>
-        <div class="moola-android details"></div>
-    </div>
-</div>
-
 
 </body>
 </html>

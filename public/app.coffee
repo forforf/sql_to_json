@@ -60,17 +60,19 @@ S2JApp.controller 'SqlCtrl', ($scope, $element, $http, JSONEditor) ->
   $scope.ed = new JSONEditor(domContainer, {mode: 'viewer'})
   ###
 
-  $scope.pp = (json) ->
-    console.log "PP", json
-    JSON.stringify(json, undefined, 2);
+  ##$scope.pp = (json) ->
+  ##  console.log "PP", json
+  ##  JSON.stringify(json, undefined, 2);
 
 
 
 
 
 
-S2JApp.controller 'ConnectionCtrl', ($scope, $element, $http) ->
+S2JApp.controller 'ConnectionCtrl', ($scope, $element, $http, $rootScope) ->
+  $rootScope.dbconnection = "bad"
   $scope.makeConnection = ->
+    $rootScope.dbconnection = "pending"
     console.log "Element", $element
     console.log $element.serialize()
     form_data = $element.serialize()
@@ -78,10 +80,18 @@ S2JApp.controller 'ConnectionCtrl', ($scope, $element, $http) ->
     form_hdr =  {'Content-Type': 'application/x-www-form-urlencoded'}
     promise = $http.post '/connection', form_data, headers: form_hdr
     promise.success (resp) ->
-      console.log "$http Resp", resp
+      console.log "Initialize connection", resp
+      if Object.keys(resp)[0] is "success"
+        $rootScope.dbconnection = "good"
+      else
+        $rootScope.dbconnection = "bad"
+    promise.error (resp) ->
+      $rootScope.dbconnection = "bad"
 
 
 S2JApp.controller 'DatabasesCtrl', ($scope, $http, $timeout, $document) ->
+
+  $scope.connection = "bad" #initial default
 
   $scope.safeApply = (fn) ->
     phase = this.$root.$$phase
@@ -147,6 +157,9 @@ S2JApp.controller 'DatabasesCtrl', ($scope, $http, $timeout, $document) ->
     console.log "checking connection"
     promise = $http.get('/databases')
     promise.success (data) ->
+      #very hacky
+      if data.length > 1
+        $scope.connection = "good"
       $scope.dbs = data
 
   #since $timeout affects all watches, move to global

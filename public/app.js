@@ -42,7 +42,7 @@
       console.log("Get SQL");
       return getSqlResults(sql_data);
     };
-    getSqlResults = function(sql_data) {
+    return getSqlResults = function(sql_data) {
       var promise, req_params;
       req_params = {
         "sql": sql_data
@@ -61,15 +61,13 @@
       $scope.ed = new JSONEditor(domContainer, {mode: 'viewer'})
     */
 
-    return $scope.pp = function(json) {
-      console.log("PP", json);
-      return JSON.stringify(json, void 0, 2);
-    };
   });
 
-  S2JApp.controller('ConnectionCtrl', function($scope, $element, $http) {
+  S2JApp.controller('ConnectionCtrl', function($scope, $element, $http, $rootScope) {
+    $rootScope.dbconnection = "bad";
     return $scope.makeConnection = function() {
       var form_data, form_hdr, promise;
+      $rootScope.dbconnection = "pending";
       console.log("Element", $element);
       console.log($element.serialize());
       form_data = $element.serialize();
@@ -80,14 +78,23 @@
       promise = $http.post('/connection', form_data, {
         headers: form_hdr
       });
-      return promise.success(function(resp) {
-        return console.log("$http Resp", resp);
+      promise.success(function(resp) {
+        console.log("Initialize connection", resp);
+        if (Object.keys(resp)[0] === "success") {
+          return $rootScope.dbconnection = "good";
+        } else {
+          return $rootScope.dbconnection = "bad";
+        }
+      });
+      return promise.error(function(resp) {
+        return $rootScope.dbconnection = "bad";
       });
     };
   });
 
   S2JApp.controller('DatabasesCtrl', function($scope, $http, $timeout, $document) {
     var DynamicRefresh, checkInterval, idleIncrement, idleTime, refreshChecker;
+    $scope.connection = "bad";
     $scope.safeApply = function(fn) {
       var phase;
       phase = this.$root.$$phase;
@@ -158,6 +165,9 @@
       console.log("checking connection");
       promise = $http.get('/databases');
       return promise.success(function(data) {
+        if (data.length > 1) {
+          $scope.connection = "good";
+        }
         return $scope.dbs = data;
       });
     };

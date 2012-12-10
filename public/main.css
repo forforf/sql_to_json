@@ -1,24 +1,31 @@
-.db-config {
+#db-config-form {
     border-style: solid;
+    border-width: 1px;
+    margin: 0.8em;
+    padding: 0em;
 }
 
+#db-config-form .form-wrapper {
+    padding: 0.4em;
+}
 #db-config-form .warning {
     color: red;
     font-size: 0.8em;
+    background-color: white;
+    margin-bottom: 0.6em;
 }
 
 #db-config-form input{
     width: 10em;
-    height: 1.2em;
-    font-size: 1em;
+    height: 1.0em;
+    font-size: 0.8em;
 }
 
-#db-config-form #dbdb{
-    width: 16em;
+#db-config-form #dbdb,
+#db-config-form #dbhost{
+    width: 18em;
 }
-#db-config-form .label {
-    font-size: 0.75em;
-}
+
 
 #db-config-form .label {
     margin: 0.2em;
@@ -29,12 +36,26 @@
     margin: 0.05em;
 }
 
-.connect {
-    margin: 0.3em;
+.databases {
+    margin: 0.8em;
 }
-.connection-status {
-    margin: 0.3em;
-    background-color: rgba(205,205,205,1);
+.databases ul {
+    list-style-type: none;
+    margin-left: 0px;
+    padding-left: 0px;
+}
+.databases li {
+    border-bottom: 1px solid #ccc;
+    margin-left: 0px;
+    padding-left: 0.5em;
+}
+.databases li:last-child {
+    border: none;
+}
+
+.result-container {
+    background-color: rgba(240,250,255,1);
+    padding: 0.5em;
 }
 
 textarea {
@@ -42,4 +63,16 @@ textarea {
     height: 1.5em;
     border: 3px solid #cccccc;
     padding: 0.5em;
+}
+
+.good {
+    background-color: rgba(200,255,200,1);
+}
+
+.bad {
+    background-color: rgba(255,200,200,1);
+}
+
+.pending {
+    background-color: rgba(200,200,200,1);
 }
